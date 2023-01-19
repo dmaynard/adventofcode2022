@@ -1,0 +1,1 @@
+/Users/dmaynard/projects/advent-of-code/2022/rust/day-02/target/debug/part-2: /Users/dmaynard/projects/advent-of-code/2022/rust/day-02/src/bin/part-2.rs /Users/dmaynard/projects/advent-of-code/2022/rust/day-02/src/lib.rs
