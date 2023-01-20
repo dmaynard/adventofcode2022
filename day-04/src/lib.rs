@@ -1,44 +1,72 @@
 pub fn process_part1(input: &str) -> String {
-    println!("Hello World {}", input);
-    let it = input.lines();
-
     let result: i32 = input
         .split("\n")
         .map(|line| {
-            println!("line {}", line);
+            // println!("line {}", line);
+            let mut limits: Vec<i32> = Vec::new();
             line.split(",")
                 .map(|range| {
-                    println!(" range {}", range);
+                    // println!(" range {}", range);
                     range
                         .split("-")
                         .map(|bound| {
-                            println!(" bound {}", bound);
+                            // println!(" bound {}", bound);
+                            match bound.parse::<i32>() {
+                                Ok(val) => limits.push(val),
+                                Err(_e) => limits.push(0),
+                            }
                             1
                         })
                         .sum::<i32>()
                 })
                 .sum::<i32>();
-
-            2
+            if (limits[2] >= limits[0] && limits[2] <= limits[1])
+                || (limits[3] >= limits[0] && limits[3] <= limits[1])
+            {
+                // println!(" found one {} ", line);
+                1
+            } else {
+                0
+            }
         })
         .sum();
 
     result.to_string()
 }
 pub fn process_part2(input: &str) -> String {
-    let mut result = input
-        .split("\n\n")
-        .map(|elf_load| {
-            elf_load
-                .lines()
-                .map(|item| item.parse::<u32>().unwrap())
-                .sum::<u32>()
+    let result: i32 = input
+        .split("\n")
+        .map(|line| {
+            // println!("line {}", line);
+            let mut limits: Vec<i32> = Vec::new();
+            line.split(",")
+                .map(|range| {
+                    // println!(" range {}", range);
+                    range
+                        .split("-")
+                        .map(|bound| {
+                            // println!(" bound {}", bound);
+                            match bound.parse::<i32>() {
+                                Ok(val) => limits.push(val),
+                                Err(_e) => limits.push(0),
+                            }
+                            1
+                        })
+                        .sum::<i32>()
+                })
+                .sum::<i32>();
+            if ((limits[2] >= limits[0]) && (limits[2] <= limits[1]))
+                || ((limits[3] >= limits[0]) && (limits[3] <= limits[1]))
+                || ((limits[2] < limits[0]) && (limits[3] > limits[1]))
+            {
+                // println!(" found one {} ", line);
+                1
+            } else {
+                0
+            }
         })
-        .collect::<Vec<_>>();
-    result.sort_by(|a, b| b.cmp(a));
-    // dbg!(result);
-    let sum: u32 = result.iter().take(3).sum();
-    sum.to_string()
+        .sum();
+    result.to_string()
 }
 #[cfg(test)]
 mod tests {
@@ -54,13 +82,13 @@ mod tests {
     #[test]
     fn it_works() {
         let result = process_part1(INPUT);
-        assert_eq!(result, "OK");
+        assert_eq!(result, "2");
     }
 
     #[test]
-    #[ignore]
+
     fn part2_works() {
         let result = process_part2(INPUT);
-        assert_eq!(result, "45000");
+        assert_eq!(result, "4");
     }
 }
