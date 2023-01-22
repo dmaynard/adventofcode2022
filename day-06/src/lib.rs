@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 pub fn process_part1(input: &str) -> usize {
-    let mut chars: Vec<u8> = input.to_string().into_bytes();
+    let chars: Vec<u8> = input.to_string().into_bytes();
     let mut hash_set: HashSet<u8> = HashSet::new();
     let mut marker: usize = 0;
     for i in 3..chars.len() {
@@ -19,7 +19,7 @@ pub fn process_part1(input: &str) -> usize {
     marker + 1
 }
 pub fn process_part2(input: &str) -> usize {
-    let mut chars: Vec<u8> = input.to_string().into_bytes();
+    let chars: Vec<u8> = input.to_string().into_bytes();
     let mut hash_set: HashSet<u8> = HashSet::new();
     let mut marker: usize = 0;
     for i in 13..chars.len() {
