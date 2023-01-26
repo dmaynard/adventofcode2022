@@ -17,12 +17,17 @@ struct FileEntry {
     size: u32,
 }
 #[derive(Debug)]
+struct DirEntry {
+    path: String,
+    size: u32,
+}
+#[derive(Debug)]
 enum Operation<'a> {
     Cd(Cd<'a>),
     Ls(Vec<Files<'a>>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Cd<'a> {
     Root,
     Up,
@@ -84,36 +89,27 @@ pub fn process_part1(input: &str) -> String {
     let mut context: Vec<&str> = vec![];
     let mut file_entries: Vec<FileEntry> = vec![];
     for command in cmds.iter() {
-        // dbg!(command);
         match command {
             Operation::Cd(Cd::Root) => {
                 context.clear();
-                println!("path: {}", path(&context));
             }
             Operation::Cd(Cd::Up) => {
                 context.pop();
-                println!("path: {}", path(&context));
+                // println!("path: {}", path(&context));
             }
             Operation::Cd(Cd::Down(name)) => {
                 context.push(name);
-                println!("path: {}", path(&context));
+                // println!("path: {}", path(&context));
             }
             Operation::Ls(files) => {
                 for file in files.iter() {
                     match file {
                         Files::File { size, name } => {
-                            dbg!(file);
                             file_entries.push(FileEntry {
                                 path: path(&context),
                                 name: name.to_string(),
                                 size: *size,
                             });
-                            println!(
-                                " pushing path {} file {} size {}",
-                                path(&context),
-                                name,
-                                size
-                            );
                         }
                         Files::Dir(_) => (),
                     }
@@ -123,18 +119,40 @@ pub fn process_part1(input: &str) -> String {
     }
 
     // dbg!(file_entries);
-    let total: u32 = file_entries
-        .iter()
-        // .cloned()
-        .map(|fe| fe.size)
-        .sum();
+    let total: u32 = file_entries.iter().map(|fe| fe.size).sum();
 
     println!(" total {}", total);
-    let unique_dirs: HashMap<String, u32> = HashMap::new();
+    let mut unique_dirs: HashMap<String, u32> = HashMap::new();
     for item in file_entries {
-        dbg!(item);
+        *unique_dirs.entry(item.path).or_insert(0) += item.size
     }
-    "95347".to_string()
+    let total2: u32 = unique_dirs.iter().map(|(key, value)| value).sum();
+    // dbg!(unique_dirs);
+    let mut accum_dir_totals: Vec<DirEntry> = vec![];
+    for (okey, oval) in &unique_dirs {
+        let asize: u32 = unique_dirs
+            .iter()
+            .filter(|(key, val)| (&key).starts_with(okey))
+            .map(|(key, value)| value)
+            .sum();
+        accum_dir_totals.push(DirEntry {
+            path: okey.to_string(),
+            size: asize,
+        });
+    }
+    // dbg!(accum_dir_totals);
+
+    let answer: u32 = accum_dir_totals
+        .iter()
+        .filter(|de| de.size < 100000)
+        .map(|de| de.size)
+        .sum();
+
+    dbg!(accum_dir_totals);
+
+    answer.to_string()
+
+    // "95347".to_string()
 }
 
 pub fn process_part2(input: &str) -> String {
@@ -183,7 +201,7 @@ $ ls
     #[test]
     fn it_works() {
         let result = process_part1(INPUT);
-        assert_eq!(result, "95347");
+        assert_eq!(result, "95437");
     }
 
     #[test]
