@@ -169,19 +169,96 @@ pub fn process_part1(input: &str) -> String {
 }
 
 pub fn process_part2(input: &str) -> String {
-    let mut result = input
-        .split("\n\n")
-        .map(|elf_load| {
-            elf_load
-                .lines()
-                .map(|item| item.parse::<u32>().unwrap())
-                .sum::<u32>()
-        })
-        .collect::<Vec<_>>();
-    result.sort_by(|a, b| b.cmp(a));
-    // dbg!(result);
-    let sum: u32 = result.iter().take(3).sum();
-    sum.to_string()
+    let cmds = commands(input).unwrap().1;
+    // dbg!(cmds);
+    let mut context: Vec<&str> = vec![];
+    let mut file_entries: Vec<FileEntry> = vec![];
+    for command in cmds.iter() {
+        match command {
+            Operation::Cd(Cd::Root) => {
+                context.clear();
+            }
+            Operation::Cd(Cd::Up) => {
+                context.pop();
+                // println!("path: {}", path(&context));
+            }
+            Operation::Cd(Cd::Down(name)) => {
+                context.push(name);
+                // println!("path: {}", path(&context));
+            }
+            Operation::Ls(files) => {
+                for file in files.iter() {
+                    match file {
+                        Files::File { size, name } => {
+                            file_entries.push(FileEntry {
+                                path: path(&context),
+                                name: name.to_string(),
+                                size: *size,
+                            });
+                        }
+                        Files::Dir(name) => {
+                            let mut dir_string = String::new();
+                            dir_string = path(&context);
+                            dir_string.push_str(&name.to_string());
+                            dir_string.push_str("/");
+                            file_entries.push(FileEntry {
+                                path: dir_string,
+                                name: name.to_string(),
+                                size: 0,
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // dbg!(file_entries);
+    let total: u32 = file_entries.iter().map(|fe| fe.size).sum();
+
+    println!(" total {}", total);
+    let mut unique_dirs: HashMap<String, u32> = HashMap::new();
+    for item in file_entries {
+        *unique_dirs.entry(item.path).or_insert(0) += item.size
+    }
+    let total2: u32 = unique_dirs.iter().map(|(key, value)| value).sum();
+    // dbg!(unique_dirs);
+    let mut accum_dir_totals: Vec<DirEntry> = vec![];
+    for (okey, oval) in &unique_dirs {
+        let asize: u32 = unique_dirs
+            .iter()
+            .filter(|(key, _val)| (&key).starts_with(okey))
+            .map(|(_key, value)| value)
+            .sum();
+        accum_dir_totals.push(DirEntry {
+            path: okey.to_string(),
+            size: asize,
+        });
+    }
+    // dbg!(accum_dir_totals);
+
+    let answer: u32 = accum_dir_totals
+        .iter()
+        .filter(|de| de.size < 100000)
+        .map(|de| de.size)
+        .sum();
+
+    // dbg!(accum_dir_totals);
+    accum_dir_totals.sort_by(|a, b| a.size.cmp(&b.size));
+
+    let needed = 30000000 - (70000000 - total);
+    let mut this_dir: u32 = 0;
+    for de in accum_dir_totals {
+        if de.size > needed {
+            this_dir = de.size;
+            break;
+        }
+    }
+
+    this_dir.to_string()
+
+    // "95347".to_string()
+    // part 1 answer 1581595
 }
 #[cfg(test)]
 mod tests {
