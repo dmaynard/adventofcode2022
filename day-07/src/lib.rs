@@ -86,6 +86,7 @@ fn path(context: &Vec<&str>) -> String {
 
 pub fn process_part1(input: &str) -> String {
     let cmds = commands(input).unwrap().1;
+    // dbg!(cmds);
     let mut context: Vec<&str> = vec![];
     let mut file_entries: Vec<FileEntry> = vec![];
     for command in cmds.iter() {
@@ -111,7 +112,17 @@ pub fn process_part1(input: &str) -> String {
                                 size: *size,
                             });
                         }
-                        Files::Dir(_) => (),
+                        Files::Dir(name) => {
+                            let mut dir_string = String::new();
+                            dir_string = path(&context);
+                            dir_string.push_str(&name.to_string());
+                            dir_string.push_str("/");
+                            file_entries.push(FileEntry {
+                                path: dir_string,
+                                name: name.to_string(),
+                                size: 0,
+                            });
+                        }
                     }
                 }
             }
@@ -132,8 +143,8 @@ pub fn process_part1(input: &str) -> String {
     for (okey, oval) in &unique_dirs {
         let asize: u32 = unique_dirs
             .iter()
-            .filter(|(key, val)| (&key).starts_with(okey))
-            .map(|(key, value)| value)
+            .filter(|(key, _val)| (&key).starts_with(okey))
+            .map(|(_key, value)| value)
             .sum();
         accum_dir_totals.push(DirEntry {
             path: okey.to_string(),
@@ -148,11 +159,13 @@ pub fn process_part1(input: &str) -> String {
         .map(|de| de.size)
         .sum();
 
-    dbg!(accum_dir_totals);
+    // dbg!(accum_dir_totals);
+    accum_dir_totals.sort_by(|a, b| a.size.cmp(&b.size));
 
     answer.to_string()
 
     // "95347".to_string()
+    // part 1 answer 1581595
 }
 
 pub fn process_part2(input: &str) -> String {
