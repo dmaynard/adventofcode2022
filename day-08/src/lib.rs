@@ -39,9 +39,7 @@ pub fn is_visible(grid: &Vec<Vec<usize>>, x: usize, y: usize) -> bool {
 
     visible_from_left || visible_from_right || visible_from_top || visible_from_bottom
 }
-pub fn view(grid: &Vec<Vec<usize>>, x: usize, y: usize) -> u32 {
-    let my_val = grid[y][x];
-
+pub fn view(grid: &Vec<Vec<usize>>, x: usize, y: usize, my_val: usize) -> u32 {
     // from left
     let visible_to_left = {
         let mut visible = 0;
@@ -153,7 +151,7 @@ pub fn process_part2(input: &str) -> String {
         .map(|(y, row)| {
             row.iter()
                 .enumerate()
-                .map(|(x, _val)| view(&grid, x, y))
+                .map(|(x, val)| view(&grid, x, y, *val))
                 .max()
                 .unwrap()
         })
