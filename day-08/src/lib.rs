@@ -138,16 +138,29 @@ pub fn process_part2(input: &str) -> String {
     for line in input.lines() {
         grid.push(line.as_bytes().iter().map(|b| *b as usize - 48).collect());
     }
-    let mut max_view = 0;
-    for (y, row) in grid.iter().enumerate() {
-        for (x, _cell) in row.iter().enumerate() {
-            let this_view = view(&grid, x, y);
-            if this_view >= max_view {
-                max_view = this_view
-            }
-        }
-    }
-    max_view.to_string()
+    // let mut max_view = 0;
+    // for (y, row) in grid.iter().enumerate() {
+    //     for (x, _cell) in row.iter().enumerate() {
+    //         let this_view = view(&grid, x, y);
+    //         if this_view >= max_view {
+    //             max_view = this_view
+    //         }
+    //     }
+    // }
+
+    let vmax = grid
+        .iter()
+        .enumerate()
+        .map(|(y, row)| {
+            row.iter()
+                .enumerate()
+                .map(|(x, _val)| view(&grid, x, y))
+                .max()
+        })
+        .max();
+
+    vmax.unwrap().unwrap().to_string()
+    //  max_view.to_string()
 }
 #[cfg(test)]
 mod tests {
