@@ -148,18 +148,20 @@ pub fn process_part2(input: &str) -> String {
     //     }
     // }
 
-    let vmax = grid
-        .iter()
+    grid.iter()
         .enumerate()
         .map(|(y, row)| {
             row.iter()
                 .enumerate()
                 .map(|(x, _val)| view(&grid, x, y))
                 .max()
+                .unwrap()
         })
-        .max();
+        .max()
+        .unwrap()
+        .to_string()
 
-    vmax.unwrap().unwrap().to_string()
+    //vmax.unwrap().unwrap().to_string()
     //  max_view.to_string()
 }
 #[cfg(test)]
