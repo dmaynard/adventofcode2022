@@ -30,33 +30,28 @@ fn make_move(b: &mut Board, d: Direction) -> Point {
         Direction::L => b.head.x = b.head.x - 1,
         Direction::R => b.head.x = b.head.x + 1,
     }
-    let delta: (i32, i32) = match (b.tail.x - b.head.x, b.tail.y - b.head.y) {
-        (0, 0) => (0, 0),
-        (1, 0) => (0, 0),
-        (0, 1) => (0, 0),
-        (-1, 0) => (0, 0),
-        (0, -1) => (0, 0),
-        (1, 1) => (0, 0),
-        (1, -1) => (0, 0),
-        (-1, 1) => (0, 0),
-        (-1, -1) => (0, 0),
-        (2, 0) => (-1, 0),
-        (-2, 0) => (1, 0),
-        (0, 2) => (0, -1),
-        (0, -2) => (0, 1),
-        // diagonal cases right side
-        (1, 2) => (-1, -1),
-        (2, 1) => (-1, -1),
-        (2, -1) => (-1, 1),
-        (1, -2) => (-1, 1),
-        // diagonal cases left side
-        (-1, 2) => (1, -1),
-        (-2, 1) => (1, -1),
-        (-2, -1) => (1, 1),
-        (-1, -2) => (1, 1),
-        (_, _) => {
-            println!("impossible board {:?} ", b);
-            (0, 0)
+    let delta: (i32, i32) = if b.are_touching() {
+        (0, 0)
+    } else {
+        match (b.tail.x - b.head.x, b.tail.y - b.head.y) {
+            (2, 0) => (-1, 0),
+            (-2, 0) => (1, 0),
+            (0, 2) => (0, -1),
+            (0, -2) => (0, 1),
+            // diagonal cases right side
+            (1, 2) => (-1, -1),
+            (2, 1) => (-1, -1),
+            (2, -1) => (-1, 1),
+            (1, -2) => (-1, 1),
+            // diagonal cases left side
+            (-1, 2) => (1, -1),
+            (-2, 1) => (1, -1),
+            (-2, -1) => (1, 1),
+            (-1, -2) => (1, 1),
+            (_, _) => {
+                println!("impossible board {:?} ", b);
+                (0, 0)
+            }
         }
     };
     b.tail.x = b.tail.x + delta.0;
