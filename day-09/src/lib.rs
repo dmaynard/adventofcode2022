@@ -228,6 +228,6 @@ R 2";
             // println!("tail {:?}", pu)
         }
         let result = process_part2(INPUT);
-        assert_eq!(result, "8");
+        assert_eq!(result, "1");
     }
 }
