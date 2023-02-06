@@ -147,7 +147,7 @@ pub fn process_part2(input: &str) -> String {
             "D" => Direction::D,
             "L" => Direction::L,
             "R" => Direction::R,
-            _ => panic!("unknown direction"),
+            _ => panic!("unknown direction {}", line),
         };
         let times: u32 = line[2..line.len()].parse().unwrap();
         for _i in 1..=times {
@@ -212,22 +212,17 @@ R 2";
 
     fn part2_works() {
         let mut ladder: [Point; 10] = [Point { x: 0, y: 0 }; 10];
-        let result = process_part2(INPUT);
+        let result = process_part2(
+            "R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20",
+        );
         println!("processed input for Part-2 answer was {}", result);
-
-        for i in 0..20 {
-            let d = if i % 2 == 0 {
-                Direction::U
-            } else {
-                Direction::R
-            };
-            // !(" move {}  d {:?}", i, d);
-
-            let pu = make_long_move(&mut ladder, d);
-            // println!(" {:?}", ladder);
-            // println!("tail {:?}", pu)
-        }
-        let result = process_part2(INPUT);
-        assert_eq!(result, "1");
+        assert_eq!(result, "36");
     }
 }
