@@ -14,7 +14,7 @@ pub fn process_part1(input: &str) -> String {
                     let val: i64 = line[5..line.len()].parse().unwrap();
                     history.push(x);
                     history.push(x);
-                    x = x + val
+                    x = x + val;
                 }
                 _ => {
                     println!(" unexpected opcode {}", opcode)
@@ -39,19 +39,55 @@ pub fn process_part1(input: &str) -> String {
     answer.to_string()
 }
 pub fn process_part2(input: &str) -> String {
-    let mut result = input
-        .split("\n\n")
-        .map(|elf_load| {
-            elf_load
-                .lines()
-                .map(|item| item.parse::<u32>().unwrap())
-                .sum::<u32>()
+    let mut x: i64 = 1;
+    let mut history: Vec<i64> = Vec::new();
+    history.push(x); // 1 based indexes
+    let _result: i64 = input
+        .lines()
+        .map(|line| {
+            let opcode = &line[0..4];
+            match opcode {
+                "noop" => {
+                    history.push(x);
+                }
+                "addx" => {
+                    let val: i64 = line[5..line.len()].parse().unwrap();
+                    history.push(x);
+                    x = x + val;
+                    history.push(x)
+                }
+                _ => {
+                    println!(" unexpected opcode {}", opcode)
+                }
+            }
+            x
         })
-        .collect::<Vec<_>>();
-    result.sort_by(|a, b| b.cmp(a));
-    // dbg!(result);
-    let sum: u32 = result.iter().take(3).sum();
-    sum.to_string()
+        .count()
+        .try_into()
+        .unwrap();
+    // dbg!({ history });
+    let indexes: [i64; 6] = [20, 60, 100, 140, 180, 220];
+    let mut answer: i64 = 0;
+    for index in indexes {
+        answer = answer + (index * history[index as usize]);
+    }
+    for (i, val) in history.iter().enumerate() {
+        let mut j: i64 = (i) as i64 % 40;
+        if j == 0 {
+            println!()
+        }
+        if (j - val).abs() < 2 {
+            print!("#");
+        } else {
+            print!(".");
+        }
+    }
+    //     let answer: i64 = indexes
+    //         .iter()
+    //         .map(|i| (*i as i64 * history[*i]) as i64)
+    //         .sum:i64()
+    //         .unwrap();
+    answer.to_string()
 }
 #[cfg(test)]
 mod tests {
@@ -210,9 +246,9 @@ noop";
     }
 
     #[test]
-    #[ignore]
+
     fn part2_works() {
         let result = process_part2(INPUT);
-        assert_eq!(result, "45000");
+        assert_eq!(result, "13140");
     }
 }
