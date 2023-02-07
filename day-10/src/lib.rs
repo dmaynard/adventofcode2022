@@ -53,9 +53,8 @@ pub fn process_part2(input: &str) -> String {
                 "addx" => {
                     let val: i64 = line[5..line.len()].parse().unwrap();
                     history.push(x);
-
-                    history.push(x);
                     x = x + val;
+                    history.push(x);
                 }
                 _ => {
                     println!(" unexpected opcode {}", opcode)
@@ -77,7 +76,7 @@ pub fn process_part2(input: &str) -> String {
         if j == 0 {
             println!()
         }
-        if ((j - 1) - val).abs() < 2 {
+        if ((j) - val).abs() < 2 {
             print!("#");
         } else {
             print!(".");
